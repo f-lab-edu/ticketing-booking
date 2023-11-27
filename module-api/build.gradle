@@ -29,7 +29,6 @@ dependencies {
     implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     implementation project(':module-common')
-    runtimeOnly 'com.h2database:h2'
 
     testImplementation 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

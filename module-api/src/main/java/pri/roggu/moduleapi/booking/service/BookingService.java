@@ -2,6 +2,7 @@ package pri.roggu.moduleapi.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pri.roggu.moduleapi.booking.repository.BookingRepository;
@@ -19,8 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingService {
 
+    private static final String TOPIC = "Ticket-Issue";
+
     private final BookingRepository bookingRepository;
     private final TicketRepository ticketRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Transactional
     public ResponseEntity<String> booking(BookingDto bookingDto) {
@@ -33,6 +37,8 @@ public class BookingService {
 
             bookingRepository.saveAll(bookings);
         }
+
+        kafkaTemplate.send(TOPIC, "booking generation");
 
         return ResponseEntity.ok().build();
     }
