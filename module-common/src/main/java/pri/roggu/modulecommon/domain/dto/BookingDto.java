@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 public class BookingDto {
 
-    private Long bookingIdx;
+    private Long bookingId;
     private List<TicketDto> tickets = new ArrayList<>();
 
 }

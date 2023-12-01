@@ -17,7 +17,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping(value = "")
-    public ResponseEntity<String> booking(@RequestBody BookingDto bookingDto) throws Exception {
+    public ResponseEntity<String> booking(@RequestBody BookingDto bookingDto) {
         return bookingService.booking(bookingDto);
     }
 

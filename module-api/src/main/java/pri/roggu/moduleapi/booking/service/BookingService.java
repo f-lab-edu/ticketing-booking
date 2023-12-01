@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import pri.roggu.moduleapi.booking.repository.BookingRepository;
 import pri.roggu.moduleapi.exception.exceptions.TicketImpossibleBookingException;
 import pri.roggu.moduleapi.ticket.repository.TicketRepository;
@@ -29,9 +30,18 @@ public class BookingService {
     @Transactional
     public ResponseEntity<String> booking(BookingDto bookingDto) {
         List<TicketDto> bookingTickets = bookingDto.getTickets();
-        if(bookingValidation(bookingTickets)) {
+
+        if(!CollectionUtils.isEmpty(bookingTickets)) {
             List<Booking> bookings = new ArrayList<>();
             for(TicketDto ticketDto : bookingTickets) {
+                Ticket ticket = ticketRepository.findById(ticketDto.getTicketId()).orElseThrow();
+
+                if(ticket.getQuantity() - ticketDto.getBookingCnt() < 0) {
+                    throw new TicketImpossibleBookingException(ticket.getTicketName());
+                }
+
+                ticket.quantityDecrease(ticketDto.getBookingCnt());
+
                 bookings.add(Booking.builder().ticketDto(ticketDto).build());
             }
 
@@ -41,24 +51,6 @@ public class BookingService {
         kafkaTemplate.send(TOPIC, "booking generation");
 
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     * FUNCTION :: 티켓 예약 유효성 검사
-     * @param ticketList
-     * @return
-     */
-    private boolean bookingValidation(List<TicketDto> ticketList) {
-        List<Long> ticketIdxs = ticketList.stream().map(TicketDto::getTicketIdx).toList();
-        List<Ticket> tickets = ticketRepository.findAllByTicketIdxIn(ticketIdxs);
-
-        for(Ticket ticket : tickets) {
-            if(ticket.getQuantity() < 1) {
-                throw new TicketImpossibleBookingException(ticket.getTicketName());
-            }
-        }
-
-        return true;
     }
 
 }

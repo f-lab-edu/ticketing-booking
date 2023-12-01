@@ -14,7 +14,6 @@ import pri.roggu.moduleapi.ticket.repository.TicketRepository;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public ResponseEntity<String> save(TicketDto ticketDto) {
 

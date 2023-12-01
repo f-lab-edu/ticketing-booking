@@ -15,7 +15,7 @@ public class Ticket extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ticketIdx;
+    private Long ticketId;
 
     private String ticketName;
     private int quantity;
@@ -26,7 +26,11 @@ public class Ticket extends Base {
         this.quantity = ticketDto.getQuantity();
     }
 
-    public void booking(TicketDto ticketDto) {
-        this.quantity -= ticketDto.getBookingCnt();
+    /**
+     * FUNCTION :: 예약 수량만큼 수량 감소
+     * @param bookingCnt
+     */
+    public void quantityDecrease(int bookingCnt) {
+        this.quantity -= bookingCnt;
     }
 }
