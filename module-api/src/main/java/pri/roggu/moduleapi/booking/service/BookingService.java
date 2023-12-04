@@ -46,9 +46,9 @@ public class BookingService {
             }
 
             bookingRepository.saveAll(bookings);
-        }
 
-        kafkaTemplate.send(TOPIC, "booking generation");
+            kafkaTemplate.send(TOPIC, "booking generation");
+        }
 
         return ResponseEntity.ok().build();
     }

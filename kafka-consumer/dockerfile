@@ -1,0 +1,5 @@
+FROM openjdk:17
+EXPOSE 9090
+ARG JAR_FILE=build/libs/kafka-consumer.jar
+COPY ${JAR_FILE} kafka-consumer.jar
+ENTRYPOINT ["java", "-jar","/kafka-consumer.jar"]

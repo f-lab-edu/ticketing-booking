@@ -20,7 +20,8 @@ public class Base {
     private String regId;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+//    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private LocalDateTime regDate;
 
 }

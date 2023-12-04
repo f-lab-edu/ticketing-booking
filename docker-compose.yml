@@ -45,3 +45,16 @@ services:
       - 9092:9092
     depends_on:
       - zookeeper
+
+  kafka-consumer:
+    build:
+      context: ./kafka-consumer
+      dockerfile: dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/ticketing?useUnicode=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123qwe!@#
+    ports:
+      - 9090:9090
+    depends_on:
+      - database
