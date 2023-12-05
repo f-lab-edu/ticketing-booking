@@ -1,6 +1,7 @@
 package pri.roggu.moduleapi.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class BookingService {
 
             bookingRepository.saveAll(bookings);
 
-            kafkaTemplate.send(TOPIC, "booking generation");
+            kafkaTemplate.send(TOPIC, bookingTickets);
         }
 
         return ResponseEntity.ok().build();
