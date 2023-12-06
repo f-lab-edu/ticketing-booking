@@ -1,0 +1,60 @@
+version: "3"
+services:
+  database:
+    container_name: Mariadb
+    image: mariadb
+    volumes:
+      - ~/docker/mariadb/etc/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ~/docker/mariadb/var/lib/mysql:/var/lib/mysql
+      - ~/docker/mariadb/var/log/maria:/var/log/maria
+    environment:
+      - MYSQL_DATABASE=ticketing
+      - MYSQL_ROOT_PASSWORD=123qwe!@#
+      - MYSQL_ROOT_HOST=%
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    ports:
+      - 3306:3306
+
+  module-api:
+    build:
+      context: ./module-api
+      dockerfile: dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/ticketing?useUnicode=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123qwe!@#
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "Ticket-Issue:1:1"
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+
+  kafka-consumer:
+    build:
+      context: ./kafka-consumer
+      dockerfile: dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/ticketing?useUnicode=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123qwe!@#
+    ports:
+      - 9090:9090
+    depends_on:
+      - database

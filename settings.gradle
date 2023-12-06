@@ -1,3 +1,4 @@
 rootProject.name = 'ticketing'
 include 'module-api'
 include 'module-common'
+include 'kafka-consumer'
